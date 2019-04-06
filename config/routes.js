@@ -19,7 +19,8 @@ async function register(req, res) {
     user.password = hash;
 
     try {
-      const newUser = await db('users').insert(user);
+      const [id] = await db('users').insert(user);
+      const newUser = await db('users').where({id}).first();
       res.status(201).json(newUser);
     } catch(e) {
       res.status(500).json({err: "Something went wrong with the server."})
