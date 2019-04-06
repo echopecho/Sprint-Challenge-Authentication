@@ -1,7 +1,7 @@
 const axios = require('axios');
 const bcrypt = require('bcryptjs');
 
-const { authenticate } = require('../auth/authenticate');
+const { authenticate, generateToken } = require('../auth/authenticate');
 const db = require('../database/dbConfig');
 
 module.exports = server => {
@@ -36,7 +36,11 @@ async function login(req, res) {
   if(username && password) {
     const user = await db('users').where({username}).first();
     if(user && bcrypt.compareSync(password, user.password)) {
-      res.status(201).json({message: `Welcome ${username}. You are now logged in`})
+      const token = generateToken(user);
+      res.status(201).json({
+        token,
+        message: `Welcome ${username}. You are now logged in`
+      })
     } else {
       res.status(401).json({err: "Invalid credentials"})
     }
