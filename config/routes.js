@@ -1,6 +1,8 @@
 const axios = require('axios');
+const bcrypt = require('bcryptjs');
 
 const { authenticate } = require('../auth/authenticate');
+const db = require('../database/dbConfig');
 
 module.exports = server => {
   server.post('/api/register', register);
@@ -8,8 +10,23 @@ module.exports = server => {
   server.get('/api/jokes', authenticate, getJokes);
 };
 
-function register(req, res) {
+async function register(req, res) {
   // implement user registration
+  const user = req.body;
+
+  if(user.username && user.password) {
+    const hash = bcrypt.hashSync(user.password, 10);
+    user.password = hash;
+
+    try {
+      const newUser = await db('users').insert(user);
+      res.status(201).json(newUser);
+    } catch(e) {
+      res.status(500).json({err: "Something went wrong with the server."})
+    }
+  } else {
+    res.status(400).json({err: "Please input username and password"})
+  }
 }
 
 function login(req, res) {
