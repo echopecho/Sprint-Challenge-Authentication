@@ -21,7 +21,7 @@ export default class Jokes extends Component {
     return (
       <div>
         {this.state.jokes.map(joke => (
-          <div>{joke.joke}</div>
+          <div key={joke.id}>{joke.joke}</div>
         ))}
       </div>
     )

@@ -16,10 +16,16 @@ export default class Login extends Component {
 
     axios.post('http://localhost:3300/api/login', this.state)
       .then(res => {
-        localStorage.setItem('jwt', res.data.token)
+        localStorage.setItem('jwt', res.data.token);
+        this.props.history.push('/jokes');
       }).catch(err => {
         console.log(err);
       })
+    
+      this.setState({
+        username: '',
+        password: ''
+      });
   }
 
   render() {
